@@ -1,1 +1,18 @@
-<router-outlet></router-outlet>
+<nav class="nav-extended">
+    <div class="nav-wrapper">
+        <a href="#" class="brand-logo">Asociatie</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger">
+            <i class="material-icons">menu</i>
+        </a>
+    </div>
+</nav>
+
+<ul class="sidenav" id="mobile-demo">
+    <li><a href="#" routerLink="/">Acasa</a></li>
+    <li><a href="#" routerLink="/adauga_index">Adauga Index</a></li>
+    <li><a href="#" rounterLink="/vizualizare">Vizualizare</a></li>
+</ul>
+
+<div class="container">
+    <router-outlet></router-outlet>
+</div>
