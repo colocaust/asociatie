@@ -1,1 +1,64 @@
 <p>home works!</p>
+<p>
+  {{diagnostic}}
+</p>
+
+<!-- Modal Structure -->
+<div id="adaugaConsum" class="modal">
+  <div class="modal-content">
+    <h4>Modal Header</h4>
+    <p>A bunch of text</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+  </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="setari" class="modal">
+  <!-- <form class="col s12" #setari="ngForm" (ngSubmit)="onSubmit()"> -->
+  <form class="col s12" [formGroup]="formularSetari" (ngSubmit)="onSubmit(formularSetari.value)">
+    <div class="modal-content">
+      <div class="row">
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="nume" formControlName="nume" type="text" class="validate" autocomplete="off">
+              <label for="nume">Nume</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="prenume" type="text" formControlName="prenume" class="validate" autocomplete="off">
+              <label for="prenume">Prenume</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="strada" type="text" formControlName="strada" class="validate" autocomplete="off">
+              <label for="strada">Strada</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s3">
+              <input id="bloc" type="text" formControlName="bloc" class="validate" autocomplete="off">
+              <label for="bloc">Bloc</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="scara" type="text" formControlName="scara" class="validate" autocomplete="off">
+              <label for="scara">Scara</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="etaj" type="text" formControlName="etaj" class="validate" autocomplete="off">
+              <label for="etaj">Etaj</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="apartament" type="text" formControlName="apartament" class="validate" autocomplete="off">
+              <label for="apartament">Apartament</label>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="waves-effect waves-green btn-flat">Salveaza</button>
+      <!-- <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a> -->
+    </div>
+  </form>
+</div>

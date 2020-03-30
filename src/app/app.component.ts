@@ -15,8 +15,8 @@ export class AppComponent implements OnInit {
 
 	ngOnInit(): void {
 		document.addEventListener('DOMContentLoaded', function() {
-			var elems = document.querySelectorAll('.sidenav');
-			var instances = M.Sidenav.init(elems, {});
+			const modal = document.querySelectorAll('.modal');
+			const modalInit = M.Modal.init(modal, {});
 		});
 	}
 }

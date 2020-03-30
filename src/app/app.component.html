@@ -1,17 +1,18 @@
 <nav class="nav-extended">
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Asociatie</a>
-        <a href="#" data-target="mobile-demo" class="sidenav-trigger">
-            <i class="material-icons">menu</i>
-        </a>
+    </div>
+    <div class="nav-content">
+        <div class="halfway2-fab">
+            <a class="btn-floating btn-large waves-effect waves-light teal modal-trigger" href="#adaugaConsum">
+                <i class="material-icons">add</i>
+            </a>
+            <a class="btn-floating btn-large waves-effect waves-light teal modal-trigger" href="#setari">
+                <i class="material-icons">settings</i>
+            </a>
+        </div>
     </div>
 </nav>
-
-<ul class="sidenav" id="mobile-demo">
-    <li><a href="#" routerLink="/">Acasa</a></li>
-    <li><a href="#" routerLink="/adauga_index">Adauga Index</a></li>
-    <li><a href="#" rounterLink="/vizualizare">Vizualizare</a></li>
-</ul>
 
 <div class="container">
     <router-outlet></router-outlet>
