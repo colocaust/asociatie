@@ -1,64 +1,155 @@
-<p>home works!</p>
-<p>
-  {{diagnostic}}
-</p>
+<table *ngIf="formData">
+  <thead>
+    <tr>
+      <th>Zi Citire</th>
+      <th>Luna</th>
+      <th *ngFor="let bucatarie of nrBucatarii">
+        Bucatarie {{ (bucatarie + 1) }}
+      </th>
+      <th *ngFor="let baie of nrBai">
+        Baie {{ (baie + 1) }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let consum of listaConsum">
+      <td>{{ consum.zi_citire }}</td>
+      <td>{{ consum.luna }}</td>
+      <td *ngFor="let bucatarie of nrBucatarii">
+          {{ consum['bucatarie_' + bucatarie ] }} m<sup>3</sup>
+      </td>
+      <td *ngFor="let baie of nrBai">
+        {{ consum['baie_' + baie ] }} m<sup>3</sup>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- Modal Structure -->
 <div id="adaugaConsum" class="modal">
-  <div class="modal-content">
-    <h4>Modal Header</h4>
-    <p>A bunch of text</p>
-  </div>
-  <div class="modal-footer">
-    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
-  </div>
+  <form [formGroup]="formularContor" (ngSubmit)="saveleazaConsum(formularContor.value)">
+    <div class="modal-content">
+      <h4>Citire Index</h4>
+
+      <div class="input-field">
+        <input class="monthPicker" id="zi_citire_pick" type="text" autocomplete="off">
+        <input id="zi_citire" formControlName="zi_citire" type="hidden">
+        <label for="zi_citire">Zi Citire</label>
+      </div>
+
+      <div class="input-field">
+        <select id="luna" formControlName="luna" type="text">
+          <option value="" disabled selected>Choose your option</option>
+          <option *ngFor="let numeLuna of lunileAnului" [ngValue]="numeLuna">
+            {{ numeLuna }}
+          </option>
+        </select>
+        <label for="luna">Luna</label>
+      </div>
+
+      <button type="button" [ngClass]="{disabled: indexBucatarie==nrBucatarii.length, btn: true}" (click)="adaugaBucatarie()">Adauga Bucatarie</button>
+      &nbsp;&nbsp;
+      <button type="button" [ngClass]="{disabled: indexBaie==nrBai.length, btn: true}" (click)="adaugaBaie()">Adauga Baie</button>
+
+      <div class="row" *ngIf="indexBucatarie > 0">
+        <div class="col s6" *ngFor="let indexBuc of maxConsum">
+          <div class="input-field" *ngIf="(indexBucatarie-1) >= indexBuc">
+            <input id="bucatarie_{{indexBuc}}" formControlName="bucatarie_{{indexBuc}}" type="text" autocomplete="off">
+            <label for="bucatarie_{{indexBuc}}">Bucatarie {{ (indexBuc+1) }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="indexBaie > 0">
+        <div class="col s6" *ngFor="let indexB of maxConsum">
+          <div class="input-field" *ngIf="(indexBaie-1) >= indexB">
+            <input id="baie_{{indexB}}" formControlName="baie_{{indexB}}" type="text" autocomplete="off">
+            <label for="baie_{{indexB}}">Baie {{ (indexB+1) }}</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn-flat">Inchide</a>
+      <button type="submit" class="waves-effect waves-light btn">Salveaza</button>
+    </div>
+  </form>
 </div>
+<div class="picker_container"></div>
 
 <!-- Modal Structure -->
 <div id="setari" class="modal">
-  <!-- <form class="col s12" #setari="ngForm" (ngSubmit)="onSubmit()"> -->
   <form class="col s12" [formGroup]="formularSetari" (ngSubmit)="onSubmit(formularSetari.value)">
     <div class="modal-content">
       <div class="row">
           <div class="row">
             <div class="input-field col s6">
-              <input id="nume" formControlName="nume" type="text" class="validate" autocomplete="off">
+              <input id="nume" formControlName="nume" type="text" autocomplete="off">
               <label for="nume">Nume</label>
             </div>
             <div class="input-field col s6">
-              <input id="prenume" type="text" formControlName="prenume" class="validate" autocomplete="off">
+              <input id="prenume" type="text" formControlName="prenume" autocomplete="off">
               <label for="prenume">Prenume</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="strada" type="text" formControlName="strada" class="validate" autocomplete="off">
+              <input id="strada" type="text" formControlName="strada" autocomplete="off">
               <label for="strada">Strada</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s3">
-              <input id="bloc" type="text" formControlName="bloc" class="validate" autocomplete="off">
+              <input id="bloc" type="text" formControlName="bloc" autocomplete="off">
               <label for="bloc">Bloc</label>
             </div>
             <div class="input-field col s3">
-              <input id="scara" type="text" formControlName="scara" class="validate" autocomplete="off">
+              <input id="scara" type="text" formControlName="scara" autocomplete="off">
               <label for="scara">Scara</label>
             </div>
             <div class="input-field col s3">
-              <input id="etaj" type="text" formControlName="etaj" class="validate" autocomplete="off">
+              <input id="etaj" type="number" formControlName="etaj" autocomplete="off">
               <label for="etaj">Etaj</label>
             </div>
             <div class="input-field col s3">
-              <input id="apartament" type="text" formControlName="apartament" class="validate" autocomplete="off">
+              <input id="apartament" type="number" formControlName="apartament" autocomplete="off">
               <label for="apartament">Apartament</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="asociatie_nr" type="text" formControlName="asociatie_nr" autocomplete="off">
+              <label for="asociatie_nr">Numarul Asociatiei</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="localitate" type="text" formControlName="localitate" autocomplete="off">
+              <label for="localitate">Localitate</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s3">
+              <input id="nr_camere" type="number" formControlName="nr_camere" autocomplete="off">
+              <label for="nr_camere">Numar Camere</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="nr_persoane" type="number" formControlName="nr_persoane" autocomplete="off">
+              <label for="nr_persoane">Numar Persoane</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="nr_bucatarii" type="number" formControlName="nr_bucatarii" autocomplete="off">
+              <label for="nr_bucatarii">Numar Bucatarii</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="nr_bai" type="number" formControlName="nr_bai" autocomplete="off">
+              <label for="nr_bai">Numar Bai</label>
             </div>
           </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button type="submit" class="waves-effect waves-green btn-flat">Salveaza</button>
-      <!-- <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a> -->
+      <a href="#!" class="modal-close btn-flat">Inchide</a>
+      <button type="submit" class="waves-effect waves-light btn">Salveaza</button>
     </div>
   </form>
 </div>

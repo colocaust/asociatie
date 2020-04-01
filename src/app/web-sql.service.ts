@@ -6,12 +6,43 @@ import { Injectable } from '@angular/core';
 export class WebSqlService {
 	db: any;
 
+	setari: any[] = [
+		'nume',
+		'prenume',
+		'strada',
+		'bloc',
+		'scara',
+		'etaj',
+		'apartament',
+		'asociatie_nr',
+		'localitate',
+		'nr_camere',
+		'nr_persoane',
+		'nr_bucatarii',
+		'nr_bai'
+	];
+	consum: any[] = [
+		'zi_citire',
+		'luna'
+	];
+
 	constructor() {
+		const seatariColoane = this.setari.join(', ');
+
+		for (let i = 0; i < 10; i++) {
+			this.consum.push('bucatarie_' + i);
+		}
+		for (let i = 0; i < 10; i++) {
+			this.consum.push('baie_' + i);
+		}
+		const consumColoane = this.consum.join(', ');
+
 		this.db = (<any>window).openDatabase('asociatie', '1.0', 'Consum Asociatie', 2 * 1024 * 1024);
 		this.db.transaction(async function(tx) {
-			await tx.executeSql(
-				`CREATE TABLE IF NOT EXISTS setari (nume, prenume, strada, bloc, scara, etaj, apartament)`
-			);
+			await tx.executeSql(`CREATE TABLE IF NOT EXISTS setari (${seatariColoane})`);
+		});
+		this.db.transaction(async function(tx) {
+			await tx.executeSql(`CREATE TABLE IF NOT EXISTS consum (${consumColoane})`);
 		});
 	}
 
@@ -46,27 +77,69 @@ export class WebSqlService {
 		});
 	}
 
-	update(tableName, setKeys, setValues, keyNameWhere, valueKeyWhere) {
+	selectAll(tableName) {
 		var self = this;
-		var setQeury = [];
-		for (var i in setKeys) {
-			setQeury.push(`${setKeys[i]} = ?`);
-		}
-		setQeury = setQeury.join(', ');
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
 				tx.executeSql(
-					`UPDATE ${tableName} SET ${setQeury} WHERE ${keyNameWhere} = ?`,
-					[
-						setValues[0],
-						setValues[1],
-						setValues[2],
-						setValues[3],
-						setValues[4],
-						setValues[5],
-						setValues[6],
-						valueKeyWhere
-					],
+					`SELECT * FROM ${tableName}`,
+					[],
+					function(tx, res) {
+						var rows = [];
+						for (var i = res.rows.length; i; i--) {
+							rows.unshift(res.rows.item(i - 1));
+						}
+						var out = { rows: rows, rowsAffected: res.rowsAffected };
+						resolve(out);
+					},
+					function(tx, err) {
+						reject(err.message);
+					}
+				);
+			});
+		});
+	}
+
+	selectAllWithOrder(tableName, orderBy, type) {
+		var self = this;
+		return new Promise(function(resolve, reject) {
+			self.db.transaction(function(tx) {
+				tx.executeSql(
+					`SELECT * FROM ${tableName} ORDER BY ${orderBy} ${type}`,
+					[],
+					function(tx, res) {
+						var rows = [];
+						for (var i = res.rows.length; i; i--) {
+							rows.unshift(res.rows.item(i - 1));
+						}
+						var out = { rows: rows, rowsAffected: res.rowsAffected };
+						resolve(out);
+					},
+					function(tx, err) {
+						reject(err.message);
+					}
+				);
+			});
+		});
+	}
+
+	update(tableName, data, keyNameWhere, valueKeyWhere) {
+		let self = this;
+		let keys = [];
+		let setQueryValues: string;
+		let values = [];
+		for (var i in data) {
+			keys.push(`${i} = ?`);
+			values.push(data[i]);
+		}
+		values.push(valueKeyWhere);
+
+		setQueryValues = keys.join(', ');
+		return new Promise(function(resolve, reject) {
+			self.db.transaction(function(tx) {
+				tx.executeSql(
+					`UPDATE ${tableName} SET ${setQueryValues} WHERE ${keyNameWhere} = ?`,
+					values,
 					function(tx, res) {
 						var rows = [];
 						for (var i = res.rows.length; i; i--) {
@@ -84,9 +157,16 @@ export class WebSqlService {
 	}
 
 	insert(tableName, data) {
-		// console.log(`INSERT INTO ${tableName} VALUES (${data})`);
+		let keys = [];
+		let setQueryValues: string;
+		let values = [];
+		for (var i in data) {
+			keys.push(`?`);
+			values.push(data[i]);
+		}
+		setQueryValues = keys.join(', ');
 		this.db.transaction(async function(tx) {
-			await tx.executeSql(`INSERT INTO ${tableName} VALUES (${data})`);
+			await tx.executeSql(`INSERT INTO ${tableName} VALUES (${setQueryValues})`, values);
 		});
 	}
 }

@@ -14,9 +14,9 @@ export class AppComponent implements OnInit {
 	title = 'asociatie';
 
 	ngOnInit(): void {
+		let self = this;
 		document.addEventListener('DOMContentLoaded', function() {
-			const modal = document.querySelectorAll('.modal');
-			const modalInit = M.Modal.init(modal, {});
+			M.AutoInit();
 		});
 	}
 }
