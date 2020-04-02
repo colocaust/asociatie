@@ -3,8 +3,6 @@ import * as M from 'materialize-css';
 import { WebSqlService } from '../web-sql.service';
 import { FormBuilder } from '@angular/forms';
 
-// import { Setari } from '../setari';
-
 declare var $: any;
 
 @Component({
@@ -61,6 +59,8 @@ export class HomeComponent implements OnInit {
 	indexBaie: number = 0;
 
 	listaConsum: any[] = [];
+
+	consumChecked = -1;
 
 	constructor(private _websql: WebSqlService, private formBuilder: FormBuilder) {
 		for (let i = 0; i < 10; i++) {
@@ -171,6 +171,37 @@ export class HomeComponent implements OnInit {
 		if (this.indexBaie < this.nrBai.length) {
 			this.indexBaie += 1;
 		}
+	}
+
+	consumPentruRaport(value: number, event: any) {
+		if (event.toElement.checked) {
+			this.consumChecked = value;
+		} else {
+			this.consumChecked = -1;
+		}
+	}
+
+	checkPentruConsum(currentValue: number) {
+		if (this.consumChecked != -1) {
+			if (this.consumChecked != currentValue) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	afiseazaRaport(currentValue: number) {
+		if (this.consumChecked == -1) {
+			return true;
+		}
+		if (this.consumChecked != currentValue) {
+			return true;
+		}
+		return false;
+	}
+
+	stergeConsum(index: number) {
+		document.querySelector(`[data-index="${index}"`).remove();
 	}
 
 	initDom() {

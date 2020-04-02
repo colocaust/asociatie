@@ -1,11 +1,18 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({
+	// we declare that this service should be created
+	// by the root application injector.
+	providedIn: 'root'
+})
 export class Setari {
-	constructor(
-		public nume: string,
-		public prenume: string,
-		public strada: string,
-		public bloc: string,
-		public scara: string,
-		public etaj: number,
-		public apartament: number
-	) {}
+	consumChecked: number = -1;
+
+	getConsumChecked() {
+		return this.consumChecked;
+	}
+
+	setConsumChecked(value) {
+		this.consumChecked = value;
+	}
 }

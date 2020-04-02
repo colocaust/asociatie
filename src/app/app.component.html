@@ -1,4 +1,4 @@
-<nav class="nav-extended">
+<nav class="nav-extended" [ngClass]="{'hide': !showNav}">
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Asociatie</a>
     </div>
@@ -14,6 +14,6 @@
     </div>
 </nav>
 
-<div class="container">
+<div [ngClass]="{'container main_container': showNav}">
     <router-outlet></router-outlet>
 </div>
