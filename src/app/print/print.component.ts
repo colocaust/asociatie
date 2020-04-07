@@ -16,6 +16,7 @@ export class PrintComponent implements OnInit {
 
 	formData: any;
 	consumData: any;
+	consumDataPrecedent: any;
 	nrBucatarii: any[] = [];
 	nrBai: any[] = [];
 	selectedId: number;
@@ -39,16 +40,27 @@ export class PrintComponent implements OnInit {
 		};
 		this.consumData = {
 			zi_citire: '',
-			luna: []
+			luna: '',
+			anul: 0,
+			consum_timestamp: 0
+		};
+
+		this.consumDataPrecedent = {
+			zi_citire: '',
+			luna: '',
+			anul: 0,
+			consum_timestamp: 0
 		};
 
 		for (let i = 0; i < 10; i++) {
 			let key = 'bucatarie_' + i;
 			this.consumData[key] = '';
+			this.consumDataPrecedent[key] = '';
 		}
 		for (let i = 0; i < 10; i++) {
 			let key = 'baie_' + i;
 			this.consumData[key] = '';
+			this.consumDataPrecedent[key] = '';
 		}
 
 		this.routeSub = this.route.params.subscribe((params) => {
@@ -94,9 +106,36 @@ export class PrintComponent implements OnInit {
 				for (let i = 0; i < this.formData.nr_bai; i++) {
 					this.totalConsum = this.totalConsum + parseFloat(formDataLocal['baie_' + i]);
 				}
+
+				this.selecteazaValoareaPrecedenta(this.consumData.consum_timestamp);
 			},
 			(err) => {
 				//
+			}
+		);
+	}
+
+	selecteazaValoareaPrecedenta(consum_timestamp: number) {
+		const selectConsum = this._websql.selectByWithOrderAndLimit(
+			'consum',
+			'consum_timestamp',
+			'<=',
+			consum_timestamp,
+			'consum_timestamp',
+			'DESC',
+			'0',
+			'2'
+		);
+		selectConsum.then(
+			(retData: any) => {
+				let formDataLocal: any = this.consumDataPrecedent;
+				if (retData.rows.length > 1) {
+					formDataLocal = { ...formDataLocal, ...retData.rows[1] };
+				}
+				this.consumDataPrecedent = formDataLocal;
+			},
+			(err) => {
+				// console.log(err);
 			}
 		);
 	}

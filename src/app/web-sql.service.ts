@@ -23,7 +23,9 @@ export class WebSqlService {
 	];
 	consum: any[] = [
 		'zi_citire',
-		'luna'
+		'luna',
+		'anul',
+		'consum_timestamp'
 	];
 
 	constructor() {
@@ -130,6 +132,34 @@ export class WebSqlService {
 		});
 	}
 
+	selectByWithOrderAndLimit(tableName, keyName, operand, valueKey, orderBy, type, offset, limit) {
+		var self = this;
+		return new Promise(function(resolve, reject) {
+			self.db.transaction(function(tx) {
+				console.log(
+					`SELECT rowid, * FROM ${tableName} WHERE ${keyName} ${operand} ${valueKey} ORDER BY ${orderBy} ${type} LIMIT ${offset}, ${limit}`
+				);
+				tx.executeSql(
+					`SELECT rowid, * FROM ${tableName} WHERE ${keyName} ${operand} ? ORDER BY ${orderBy} ${type} LIMIT ${offset}, ${limit}`,
+					[
+						valueKey
+					],
+					function(tx, res) {
+						let rows = [];
+						for (let i = 0; i < res.rows.length; i++) {
+							rows.push(res.rows.item(i));
+						}
+						let out = { rows: rows, rowsAffected: res.rowsAffected };
+						resolve(out);
+					},
+					function(tx, err) {
+						reject(err.message);
+					}
+				);
+			});
+		});
+	}
+
 	update(tableName, data, keyNameWhere, valueKeyWhere) {
 		let self = this;
 		let keys = [];
@@ -174,6 +204,19 @@ export class WebSqlService {
 		setQueryValues = keys.join(', ');
 		this.db.transaction(async function(tx) {
 			await tx.executeSql(`INSERT INTO ${tableName} VALUES (${setQueryValues})`, values);
+		});
+	}
+
+	remove(tableName, keyName, keyValue) {
+		let self = this;
+
+		let values = [];
+		values.push(keyValue);
+
+		return new Promise(function(resolve, reject) {
+			self.db.transaction(function(tx) {
+				tx.executeSql(`DELETE FROM ${tableName} WHERE ${keyName} = ?`, values);
+			});
 		});
 	}
 }

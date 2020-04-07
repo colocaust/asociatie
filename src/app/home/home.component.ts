@@ -31,7 +31,9 @@ export class HomeComponent implements OnInit {
 	};
 	consumData: object = {
 		zi_citire: '',
-		luna: []
+		luna: '',
+		anul: 0,
+		consum_timestamp: 0
 	};
 	formularSetari;
 	formularContor;
@@ -53,6 +55,8 @@ export class HomeComponent implements OnInit {
 		'Decembrie'
 	];
 
+	listaAnilor = [];
+
 	maxConsum: any[] = [];
 
 	indexBucatarie: number = 0;
@@ -72,6 +76,14 @@ export class HomeComponent implements OnInit {
 			this.consumData[key] = '';
 			this.maxConsum.push(i);
 		}
+
+		let date = new Date();
+		let anulCurent = date.getFullYear();
+		this.consumData['anul'] = anulCurent;
+		for (let i = anulCurent - 2; i < anulCurent + 6; i++) {
+			this.listaAnilor.push(i);
+		}
+
 		this.formularSetari = this.formBuilder.group(this.formData);
 		this.formularContor = this.formBuilder.group(this.consumData);
 	}
@@ -97,11 +109,7 @@ export class HomeComponent implements OnInit {
 				//
 			}
 		);
-		const selectConsum = this._websql.selectAllWithOrder(
-			'consum',
-			'substr(zi_citire,7)||substr(zi_citire,4,2)||substr(zi_citire,1,2)',
-			'ASC'
-		);
+		const selectConsum = this._websql.selectAllWithOrder('consum', 'consum_timestamp', 'ASC');
 		selectConsum.then(
 			(retData: any) => {
 				if (retData.rows.length > 0) {
@@ -116,15 +124,22 @@ export class HomeComponent implements OnInit {
 	}
 
 	saveleazaConsum(data) {
+		let indexLuna = this.lunileAnului.indexOf(data.luna) + 1;
+		let valoareAn = data.anul;
+		let valoareZi = 1;
+		let calculData = new Date(`${indexLuna}/${valoareZi}/${valoareAn}`);
+		data.consum_timestamp = calculData.getTime();
+
 		const modalInst = M.Modal.getInstance(document.getElementById('adaugaConsum'));
 		modalInst.close();
 		this._websql.insert('consum', data);
 
-		const selectConsum = this._websql.selectAllWithOrder(
-			'consum',
-			'substr(zi_citire,7)||substr(zi_citire,4,2)||substr(zi_citire,1,2)',
-			'ASC'
-		);
+		// const selectConsum = this._websql.selectAllWithOrder(
+		// 	'consum',
+		// 	'substr(zi_citire,7)||substr(zi_citire,4,2)||substr(zi_citire,1,2)',
+		// 	'ASC'
+		// );
+		const selectConsum = this._websql.selectAllWithOrder('consum', 'consum_timestamp', 'ASC');
 		selectConsum.then(
 			(retData: any) => {
 				if (retData.rows.length > 0) {
@@ -137,6 +152,14 @@ export class HomeComponent implements OnInit {
 		);
 
 		this.formularContor.reset();
+
+		let date = new Date();
+		let anulCurent = date.getFullYear();
+		this.consumData['anul'] = anulCurent;
+		this.indexBucatarie = 0;
+		this.indexBaie = 0;
+		let zi_citire_pick: any = document.getElementById('zi_citire_pick');
+		zi_citire_pick.value = '';
 	}
 
 	onSubmit(data) {
@@ -156,7 +179,6 @@ export class HomeComponent implements OnInit {
 			},
 			(err) => {
 				this.formularSetari.reset();
-				console.error(err);
 			}
 		);
 	}
@@ -200,7 +222,8 @@ export class HomeComponent implements OnInit {
 		return false;
 	}
 
-	stergeConsum(index: number) {
+	stergeConsum(index: number, rowid: number) {
+		this._websql.remove('consum', 'rowid', rowid);
 		document.querySelector(`[data-index="${index}"`).remove();
 	}
 
@@ -313,6 +336,10 @@ export class HomeComponent implements OnInit {
 									// self.formularContor.controls['zi_citire'].setValue(inst.date);
 									self.formularContor.controls['zi_citire'].setValue(inst.toString());
 								}
+						});
+
+						M.FormSelect.init(document.querySelectorAll('.matSelect'), {
+							dropdownOptions: { container: document.body }
 						});
 					}
 			});

@@ -3,12 +3,12 @@
     <tr>
       <th style="width: 35px;"></th>
       <th>Zi Citire</th>
-      <th>Luna</th>
+      <th>Luna / Anul</th>
       <th *ngFor="let bucatarie of nrBucatarii">
-        Bucatarie {{ (bucatarie + 1) }}
+        Bucatarie {{ (bucatarie + 1) }} <small>(index)</small>
       </th>
       <th *ngFor="let baie of nrBai">
-        Baie {{ (baie + 1) }}
+        Baie {{ (baie + 1) }} <small>(index)</small>
       </th>
       <th style="width: 90px;"></th>
     </tr>
@@ -22,17 +22,17 @@
         </label>
       </td>
       <td>{{ consum.zi_citire }}</td>
-      <td>{{ consum.luna }}</td>
+      <td>{{ consum.luna }} / {{ consum.anul }}</td>
       <td *ngFor="let bucatarie of nrBucatarii">
-          {{ consum['bucatarie_' + bucatarie ] }} m<sup>3</sup>
+          {{ consum['bucatarie_' + bucatarie ] }} 
       </td>
       <td *ngFor="let baie of nrBai">
-        {{ consum['baie_' + baie ] }} m<sup>3</sup>
+        {{ consum['baie_' + baie ] }}
       </td>
       <td class="right-align">
         <a type="button" [ngClass]="{'hide': afiseazaRaport(i)}" class="waves-effect waves-light btn-floating btn-small red" target="_blank" [routerLink]="['/print', consum.rowid]"><i class="material-icons">local_printshop</i></a>
         &nbsp;
-        <button type="button" class="waves-effect waves-light btn-floating btn-small red" (click)="stergeConsum(i)"><i class="material-icons">remove_circle_outline</i></button>
+        <button type="button" class="waves-effect waves-light btn-floating btn-small red" (click)="stergeConsum(i, consum.rowid)"><i class="material-icons">remove_circle_outline</i></button>
       </td>
     </tr>
   </tbody>
@@ -50,14 +50,36 @@
         <label for="zi_citire">Zi Citire</label>
       </div>
 
-      <div class="input-field">
-        <select id="luna" formControlName="luna" type="text">
-          <option value="" disabled selected>Choose your option</option>
-          <option *ngFor="let numeLuna of lunileAnului" [ngValue]="numeLuna">
-            {{ numeLuna }}
-          </option>
-        </select>
-        <label for="luna">Luna</label>
+      <div class="row">
+
+        <div class="col s6">
+
+          <div class="input-field">
+            <select class="matSelect" id="luna" formControlName="luna">
+              <option value="" disabled selected>Choose your option</option>
+              <option *ngFor="let numeLuna of lunileAnului" [ngValue]="numeLuna">
+                {{ numeLuna }}
+              </option>
+            </select>
+            <label for="luna">Luna</label>
+          </div>
+
+        </div>
+
+        <div class="col s6">
+
+          <div class="input-field">
+            <select class="matSelect" id="anul" formControlName="anul">
+              <option value="" disabled>Choose your option</option>
+              <option *ngFor="let selectAnul of listaAnilor" [ngValue]="selectAnul">
+                {{ selectAnul }}
+              </option>
+            </select>
+            <label for="anul">Anul</label>
+          </div>
+
+        </div>
+
       </div>
 
       <button type="button" [ngClass]="{disabled: indexBucatarie==nrBucatarii.length, btn: true}" (click)="adaugaBucatarie()">Adauga Bucatarie</button>

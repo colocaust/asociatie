@@ -3,7 +3,7 @@
     <div class="center-align">
         <h6 class="titlu">Consum apa rece</h6>
     </div>
-    <h6 class="titlu">Luna ______ Anul ______</h6>
+    <h6 class="titlu">Luna <span class="valori">{{ consumData.luna }}</span> Anul <span class="valori">{{ consumData.anul }}</span></h6>
     <h6 class="titlu">Nume, prenume proprientar <span class="valori">{{ formData.nume }} {{ formData.prenume }}</span></h6>
     <h6 class="titlu">
         Strada <span class="valori">{{ formData.strada }}</span>&nbsp;
@@ -34,20 +34,20 @@
         </tr>
         <tr>
             <td>Index nou</td>
-            <td *ngFor="let baie of nrBai"></td>
-            <td *ngFor="let bucatarie of nrBucatarii"></td>
+            <td *ngFor="let baie of nrBai">{{ consumData['baie_' + baie ] }}</td>
+            <td *ngFor="let bucatarie of nrBucatarii">{{ consumData['bucatarie_' + bucatarie ] }}</td>
             <td></td>
         </tr>
         <tr>
             <td>Index vechi</td>
-            <td *ngFor="let baie of nrBai"></td>
-            <td *ngFor="let bucatarie of nrBucatarii"></td>
+            <td *ngFor="let baie of nrBai">{{ consumDataPrecedent['baie_' + baie ] }}</td>
+            <td *ngFor="let bucatarie of nrBucatarii">{{ consumDataPrecedent['bucatarie_' + bucatarie ] }}</td>
             <td class="center-align">TOTAL</td>
         </tr>
         <tr>
             <td>Consum <small class="text_normal">( m<sup>3</sup> )</small></td>
-            <td *ngFor="let baie of nrBai">{{ consumData['baie_' + baie ] }}</td>
-            <td *ngFor="let bucatarie of nrBucatarii">{{ consumData['bucatarie_' + bucatarie ] }}</td>
+            <td *ngFor="let baie of nrBai">{{ ( consumData['baie_' + baie ] - consumDataPrecedent['baie_' + baie ] ) }}</td>
+            <td *ngFor="let bucatarie of nrBucatarii">{{ ( consumData['bucatarie_' + bucatarie ] - consumDataPrecedent['bucatarie_' + bucatarie ] ) }}</td>
             <td>{{ totalConsum }}</td>
         </tr>
     </tbody>
