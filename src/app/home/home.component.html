@@ -30,7 +30,7 @@
         {{ consum['baie_' + baie ] }} m<sup>3</sup>
       </td>
       <td class="right-align">
-        <a type="button" [ngClass]="{'hide': afiseazaRaport(i)}" class="waves-effect waves-light btn-floating btn-small red" target="_blank" [routerLink]="['/print', i]"><i class="material-icons">local_printshop</i></a>
+        <a type="button" [ngClass]="{'hide': afiseazaRaport(i)}" class="waves-effect waves-light btn-floating btn-small red" target="_blank" [routerLink]="['/print', consum.rowid]"><i class="material-icons">local_printshop</i></a>
         &nbsp;
         <button type="button" class="waves-effect waves-light btn-floating btn-small red" (click)="stergeConsum(i)"><i class="material-icons">remove_circle_outline</i></button>
       </td>
@@ -41,7 +41,7 @@
 <!-- Modal Structure -->
 <div id="adaugaConsum" class="modal">
   <form [formGroup]="formularContor" (ngSubmit)="saveleazaConsum(formularContor.value)">
-    <div class="modal-content">
+    <div class="modal-content" style="padding-bottom: 0;">
       <h4>Citire Index</h4>
 
       <div class="input-field">
@@ -94,7 +94,7 @@
 <!-- Modal Structure -->
 <div id="setari" class="modal">
   <form class="col s12" [formGroup]="formularSetari" (ngSubmit)="onSubmit(formularSetari.value)">
-    <div class="modal-content">
+    <div class="modal-content" style="padding-bottom: 0;">
       <div class="row">
           <div class="row">
             <div class="input-field col s6">
@@ -159,6 +159,7 @@
             </div>
           </div>
       </div>
+      <div style="clear: both;"></div>
     </div>
     <div class="modal-footer">
       <a href="#!" class="modal-close btn-flat">Inchide</a>

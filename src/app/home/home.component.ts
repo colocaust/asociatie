@@ -212,6 +212,8 @@ export class HomeComponent implements OnInit {
 				onOpenStart:
 					() => {
 						M.updateTextFields();
+						// document.getElementById('setari').style.overflowY = 'visible';
+						// document.getElementById('setari').style.maxHeight = 'inherit';
 					}
 			});
 
@@ -220,7 +222,8 @@ export class HomeComponent implements OnInit {
 				onOpenStart:
 					() => {
 						M.updateTextFields();
-						document.getElementById('adaugaConsum').style.overflowY = 'visible';
+						// document.getElementById('adaugaConsum').style.overflowY = 'visible';
+						// document.getElementById('adaugaConsum').style.maxHeight = 'inherit';
 						let alegeLuna = M.Datepicker.init(document.querySelector('.monthPicker'), {
 							autoClose: true,
 							format: 'dd.mm.yyyy',

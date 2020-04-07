@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
 	showNav: boolean = true;
 
 	constructor(private router: Router) {
-		router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event) => {
+		router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event: any) => {
 			if (event.url.indexOf('/print') !== -1) {
 				this.showNav = false;
 			}

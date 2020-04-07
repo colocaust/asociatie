@@ -57,16 +57,20 @@ export class WebSqlService {
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
 				tx.executeSql(
-					`SELECT * FROM ${tableName} WHERE ${keyName} = ?`,
+					`SELECT rowid, * FROM ${tableName} WHERE ${keyName} = ?`,
 					[
 						valueKey
 					],
 					function(tx, res) {
-						var rows = [];
-						for (var i = res.rows.length; i; i--) {
-							rows.unshift(res.rows.item(i - 1));
+						// var rows = [];
+						// for (var i = res.rows.length; i; i--) {
+						// 	rows.unshift(res.rows.item(i - 1));
+						// }
+						let rows = [];
+						for (let i = 0; i < res.rows.length; i++) {
+							rows.push(res.rows.item(i));
 						}
-						var out = { rows: rows, rowsAffected: res.rowsAffected };
+						let out = { rows: rows, rowsAffected: res.rowsAffected };
 						resolve(out);
 					},
 					function(tx, err) {
@@ -82,14 +86,14 @@ export class WebSqlService {
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
 				tx.executeSql(
-					`SELECT * FROM ${tableName}`,
+					`SELECT rowid, * FROM ${tableName}`,
 					[],
 					function(tx, res) {
-						var rows = [];
-						for (var i = res.rows.length; i; i--) {
-							rows.unshift(res.rows.item(i - 1));
+						let rows = [];
+						for (let i = 0; i < res.rows.length; i++) {
+							rows.push(res.rows.item(i));
 						}
-						var out = { rows: rows, rowsAffected: res.rowsAffected };
+						let out = { rows: rows, rowsAffected: res.rowsAffected };
 						resolve(out);
 					},
 					function(tx, err) {
@@ -105,14 +109,17 @@ export class WebSqlService {
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
 				tx.executeSql(
-					`SELECT * FROM ${tableName} ORDER BY ${orderBy} ${type}`,
+					`SELECT rowid, * FROM ${tableName} ORDER BY ${orderBy} ${type}`,
 					[],
 					function(tx, res) {
-						var rows = [];
-						for (var i = res.rows.length; i; i--) {
-							rows.unshift(res.rows.item(i - 1));
+						let rows = [];
+						for (let i = 0; i < res.rows.length; i++) {
+							rows.push(res.rows.item(i));
 						}
-						var out = { rows: rows, rowsAffected: res.rowsAffected };
+						// for (var i = res.rows.length; i; i--) {
+						// 	rows.unshift(res.rows.item(i - 1));
+						// }
+						let out = { rows: rows, rowsAffected: res.rowsAffected };
 						resolve(out);
 					},
 					function(tx, err) {

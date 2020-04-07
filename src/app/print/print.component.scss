@@ -1,1 +1,72 @@
+* {
+	font-family: 'Calibri';
+	font-weight: bold;
+}
+.pagina {
+	width: 600px;
+	margin-top: 10px;
+}
+.titlu {
+	text-transform: uppercase;
+}
+h6 {
+	padding: 0;
+	margin: 0;
+	margin-bottom: 4px;
+}
 
+.tabel thead th {
+	text-align: center;
+	text-transform: uppercase;
+}
+.tabel tbody td {
+	text-align: center;
+	font-style: italic;
+	font-weight: normal;
+}
+.tabel tbody td:first-child,
+.tabel tbody td:last-child {
+	text-transform: uppercase;
+	width: 150px;
+	font-weight: bold;
+	font-style: normal;
+	text-align: left;
+}
+.tabel tbody td:last-child {
+	text-align: center;
+}
+
+.tabel,
+.tabel tr,
+.tabel td,
+.tabel th {
+	border: 1px solid #000 !important;
+	padding: 0 !important;
+	line-height: 1.2;
+}
+
+.tabel td {
+	margin: 5px;
+}
+
+.text_normal {
+	text-transform: lowercase;
+}
+
+.subsol p {
+	padding: 0;
+	margin: 0;
+	line-height: 1;
+}
+
+span.valori {
+	font-style: italic;
+	font-weight: normal;
+}
+
+@media print {
+	.pagina {
+		width: inherit;
+		margin-top: 0;
+	}
+}

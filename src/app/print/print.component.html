@@ -1,1 +1,64 @@
-<p>print works!</p>
+<div class="pagina">
+    <h6 class="titlu">Asociatia de proprietari Nr. {{ formData.asociatie_nr }} {{ formData.localitate }}</h6>
+    <div class="center-align">
+        <h6 class="titlu">Consum apa rece</h6>
+    </div>
+    <h6 class="titlu">Luna ______ Anul ______</h6>
+    <h6 class="titlu">Nume, prenume proprientar <span class="valori">{{ formData.nume }} {{ formData.prenume }}</span></h6>
+    <h6 class="titlu">
+        Strada <span class="valori">{{ formData.strada }}</span>&nbsp;
+        Bloc <span class="valori">{{ formData.bloc }}</span>&nbsp;
+        Scara <span class="valori">{{ formData.scara }}</span>&nbsp;
+        Etaj <span class="valori">{{ formData.etaj }}</span>&nbsp;
+        Ap. <span class="valori">{{ formData.apartament }}</span>&nbsp;
+    </h6>
+    <h6 class="titlu">Nr.Camere <span class="valori">{{ formData.nr_camere }}</span> Nr.Persoane <span class="valori">{{ formData.nr_persoane }}</span></h6>
+    <div class="center-align">
+        <p>Semnatura proprietar ______________</p>
+    </div>
+    <table class="tabel">
+    <thead>
+        <tr>
+            <th></th>
+            <th *ngFor="let baie of nrBai">Baie <span [ngClass]="{'hide': (formData.nr_bai==1)}">#{{ (baie+1) }}</span></th>
+            <th *ngFor="let bucatarie of nrBucatarii">Bucatarie <span [ngClass]="{'hide': (formData.nr_bucatarii==1)}">#{{ (bucatarie+1) }}</span></th>
+            <th>Observatii</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Tip apometru<br>Serie apometru</td>
+            <td *ngFor="let baie of nrBai"></td>
+            <td *ngFor="let bucatarie of nrBucatarii"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Index nou</td>
+            <td *ngFor="let baie of nrBai"></td>
+            <td *ngFor="let bucatarie of nrBucatarii"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Index vechi</td>
+            <td *ngFor="let baie of nrBai"></td>
+            <td *ngFor="let bucatarie of nrBucatarii"></td>
+            <td class="center-align">TOTAL</td>
+        </tr>
+        <tr>
+            <td>Consum <small class="text_normal">( m<sup>3</sup> )</small></td>
+            <td *ngFor="let baie of nrBai">{{ consumData['baie_' + baie ] }}</td>
+            <td *ngFor="let bucatarie of nrBucatarii">{{ consumData['bucatarie_' + bucatarie ] }}</td>
+            <td>{{ totalConsum }}</td>
+        </tr>
+    </tbody>
+    </table>
+    <br />
+    <div class="subsol">
+        <p>1.Proprietarul este oblicat sa declare corect indexul apometrelor privind consumul de apa rece.</p>
+        <p>2.Citirea indexul apometrelor din apartamente se va face in ziua de 17 a lunii curente, ziua in care si cei RAJA S.A. fac citirea apometrelor de bransament.</p>
+        <p>3.Termentul de depunere a fisei de consum este 17 - 20 a lunii curente, in ca contrar consumul de apa rece se calculeaza la pausal.</p>
+        <p>4.Proprietarul nu are voie sa desigileze apometrele fara avizul Asociatiei de proprietari.</p>
+        <p>5.Proprietarul este obligat sa faca verificarea metrologica a apometrelor si sa anunte Asociatia de proprietari atunci cand o face.</p>
+        <p class="center-align">Administrator</p>
+    </div>
+</div>
