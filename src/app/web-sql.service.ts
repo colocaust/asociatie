@@ -55,7 +55,7 @@ export class WebSqlService {
 	}
 
 	select(tableName, keyName, valueKey) {
-		var self = this;
+		let self = this;
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
 				tx.executeSql(
@@ -64,10 +64,6 @@ export class WebSqlService {
 						valueKey
 					],
 					function(tx, res) {
-						// var rows = [];
-						// for (var i = res.rows.length; i; i--) {
-						// 	rows.unshift(res.rows.item(i - 1));
-						// }
 						let rows = [];
 						for (let i = 0; i < res.rows.length; i++) {
 							rows.push(res.rows.item(i));
@@ -76,6 +72,37 @@ export class WebSqlService {
 						resolve(out);
 					},
 					function(tx, err) {
+						reject(err.message);
+					}
+				);
+			});
+		});
+	}
+
+	selectWhere(tableName: string, where: any) {
+		let self = this;
+		let whereString = '';
+		let whereArray = [];
+		let whereValues = [];
+		for (let key in where) {
+			whereValues.push(where[key]);
+			whereArray.push(`${key} = ?`);
+		}
+		whereString = whereArray.join(' AND ');
+		return new Promise(function(resolve, reject) {
+			self.db.transaction(function(tx) {
+				tx.executeSql(
+					`SELECT rowid, * FROM ${tableName} WHERE ${whereString}`,
+					whereValues,
+					(tx, res) => {
+						let rows = [];
+						for (let i = 0; i < res.rows.length; i++) {
+							rows.push(res.rows.item(i));
+						}
+						let out = { rows: rows, rowsAffected: res.rowsAffected };
+						resolve(out);
+					},
+					(tx, err) => {
 						reject(err.message);
 					}
 				);
@@ -84,13 +111,13 @@ export class WebSqlService {
 	}
 
 	selectAll(tableName) {
-		var self = this;
+		let self = this;
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
 				tx.executeSql(
 					`SELECT rowid, * FROM ${tableName}`,
 					[],
-					function(tx, res) {
+					(tx, res) => {
 						let rows = [];
 						for (let i = 0; i < res.rows.length; i++) {
 							rows.push(res.rows.item(i));
@@ -98,7 +125,7 @@ export class WebSqlService {
 						let out = { rows: rows, rowsAffected: res.rowsAffected };
 						resolve(out);
 					},
-					function(tx, err) {
+					(tx, err) => {
 						reject(err.message);
 					}
 				);
@@ -107,24 +134,21 @@ export class WebSqlService {
 	}
 
 	selectAllWithOrder(tableName, orderBy, type) {
-		var self = this;
+		let self = this;
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
 				tx.executeSql(
 					`SELECT rowid, * FROM ${tableName} ORDER BY ${orderBy} ${type}`,
 					[],
-					function(tx, res) {
+					(tx, res) => {
 						let rows = [];
 						for (let i = 0; i < res.rows.length; i++) {
 							rows.push(res.rows.item(i));
 						}
-						// for (var i = res.rows.length; i; i--) {
-						// 	rows.unshift(res.rows.item(i - 1));
-						// }
 						let out = { rows: rows, rowsAffected: res.rowsAffected };
 						resolve(out);
 					},
-					function(tx, err) {
+					(tx, err) => {
 						reject(err.message);
 					}
 				);
@@ -133,18 +157,15 @@ export class WebSqlService {
 	}
 
 	selectByWithOrderAndLimit(tableName, keyName, operand, valueKey, orderBy, type, offset, limit) {
-		var self = this;
+		let self = this;
 		return new Promise(function(resolve, reject) {
 			self.db.transaction(function(tx) {
-				console.log(
-					`SELECT rowid, * FROM ${tableName} WHERE ${keyName} ${operand} ${valueKey} ORDER BY ${orderBy} ${type} LIMIT ${offset}, ${limit}`
-				);
 				tx.executeSql(
 					`SELECT rowid, * FROM ${tableName} WHERE ${keyName} ${operand} ? ORDER BY ${orderBy} ${type} LIMIT ${offset}, ${limit}`,
 					[
 						valueKey
 					],
-					function(tx, res) {
+					(tx, res) => {
 						let rows = [];
 						for (let i = 0; i < res.rows.length; i++) {
 							rows.push(res.rows.item(i));
@@ -152,7 +173,7 @@ export class WebSqlService {
 						let out = { rows: rows, rowsAffected: res.rowsAffected };
 						resolve(out);
 					},
-					function(tx, err) {
+					(tx, err) => {
 						reject(err.message);
 					}
 				);
@@ -177,7 +198,7 @@ export class WebSqlService {
 				tx.executeSql(
 					`UPDATE ${tableName} SET ${setQueryValues} WHERE ${keyNameWhere} = ?`,
 					values,
-					function(tx, res) {
+					(tx, res) => {
 						var rows = [];
 						for (var i = res.rows.length; i; i--) {
 							rows.unshift(res.rows.item(i - 1));
@@ -185,7 +206,7 @@ export class WebSqlService {
 						var out = { rows: rows, rowsAffected: res.rowsAffected };
 						resolve(out);
 					},
-					function(tx, err) {
+					(tx, err) => {
 						reject(err.message);
 					}
 				);

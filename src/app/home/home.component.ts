@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as M from 'materialize-css';
 import { WebSqlService } from '../web-sql.service';
 import { FormBuilder } from '@angular/forms';
+import { runInThisContext } from 'vm';
 
 declare var $: any;
 
@@ -63,6 +64,7 @@ export class HomeComponent implements OnInit {
 	indexBaie: number = 0;
 
 	listaConsum: any[] = [];
+	consumTotalM3: number = 0;
 
 	consumChecked = -1;
 
@@ -109,21 +111,13 @@ export class HomeComponent implements OnInit {
 				//
 			}
 		);
-		const selectConsum = this._websql.selectAllWithOrder('consum', 'consum_timestamp', 'ASC');
-		selectConsum.then(
-			(retData: any) => {
-				if (retData.rows.length > 0) {
-					this.listaConsum = retData.rows;
-				}
-			},
-			(err) => {
-				console.log(err);
-			}
-		);
+
+		this.colecteazaSiAfiseazaConsum();
+
 		this.initDom();
 	}
 
-	saveleazaConsum(data) {
+	saveleazaConsum(data: any) {
 		let indexLuna = this.lunileAnului.indexOf(data.luna) + 1;
 		let valoareAn = data.anul;
 		let valoareZi = 1;
@@ -131,35 +125,34 @@ export class HomeComponent implements OnInit {
 		data.consum_timestamp = calculData.getTime();
 
 		const modalInst = M.Modal.getInstance(document.getElementById('adaugaConsum'));
-		modalInst.close();
-		this._websql.insert('consum', data);
 
-		// const selectConsum = this._websql.selectAllWithOrder(
-		// 	'consum',
-		// 	'substr(zi_citire,7)||substr(zi_citire,4,2)||substr(zi_citire,1,2)',
-		// 	'ASC'
-		// );
-		const selectConsum = this._websql.selectAllWithOrder('consum', 'consum_timestamp', 'ASC');
-		selectConsum.then(
+		let existaConsum = this._websql.selectWhere('consum', { luna: data.luna, anul: data.anul });
+
+		existaConsum.then(
 			(retData: any) => {
 				if (retData.rows.length > 0) {
-					this.listaConsum = retData.rows;
+					// Exista ( Eroare )
+					this.displayMessage('error', 'Acest consum este deja adaugat!');
+				} else {
+					this._websql.insert('consum', data);
+					this.colecteazaSiAfiseazaConsum();
+					this.formularContor.reset();
+
+					let date = new Date();
+					let anulCurent = date.getFullYear();
+					this.consumData['anul'] = anulCurent;
+					this.indexBucatarie = 0;
+					this.indexBaie = 0;
+					let zi_citire_pick: any = document.getElementById('zi_citire_pick');
+					zi_citire_pick.value = '';
+					this.displayMessage('success', 'Indexul a fost adaugat cu succes!');
 				}
+				modalInst.close();
 			},
 			(err) => {
-				console.log(err);
+				this.displayMessage('error-server', err);
 			}
 		);
-
-		this.formularContor.reset();
-
-		let date = new Date();
-		let anulCurent = date.getFullYear();
-		this.consumData['anul'] = anulCurent;
-		this.indexBucatarie = 0;
-		this.indexBaie = 0;
-		let zi_citire_pick: any = document.getElementById('zi_citire_pick');
-		zi_citire_pick.value = '';
 	}
 
 	onSubmit(data) {
@@ -172,12 +165,15 @@ export class HomeComponent implements OnInit {
 			(retData: any) => {
 				if (retData.rows.length > 0) {
 					this._websql.update('setari', data, 'rowid', '1');
+					this.displayMessage('success', 'Setarile au fost modificate cu succes!');
 				} else {
 					this._websql.insert('setari', data);
+					this.displayMessage('success', 'Setarile au fost adaugate cu succes!');
 				}
 				this.formData = { ...this.formData, ...data };
 			},
 			(err) => {
+				this.displayMessage('error-server', err);
 				this.formularSetari.reset();
 			}
 		);
@@ -225,6 +221,60 @@ export class HomeComponent implements OnInit {
 	stergeConsum(index: number, rowid: number) {
 		this._websql.remove('consum', 'rowid', rowid);
 		document.querySelector(`[data-index="${index}"`).remove();
+
+		this.colecteazaSiAfiseazaConsum();
+		this.displayMessage('info', 'Indexul a fost sters cu succes!');
+	}
+
+	colecteazaSiAfiseazaConsum() {
+		const selectConsum = this._websql.selectAllWithOrder('consum', 'consum_timestamp', 'ASC');
+		selectConsum.then(
+			(retData: any) => {
+				if (retData.rows.length > 0) {
+					retData.rows.forEach((row, index) => {
+						let consumPrecedent = [];
+						let totalConsum = 0;
+						if (index > 0) {
+							consumPrecedent = retData.rows[index - 1];
+							for (let i = 0; i < this.formData.nr_bucatarii; i++) {
+								let indexCurent = parseInt(row[`bucatarie_${i}`]);
+								let indexPrecedent = parseInt(consumPrecedent[`bucatarie_${i}`]);
+								totalConsum += indexCurent - indexPrecedent;
+							}
+							for (let i = 0; i < this.formData.nr_bai; i++) {
+								let indexCurent = parseInt(row[`baie_${i}`]);
+								let indexPrecedent = parseInt(consumPrecedent[`baie_${i}`]);
+								totalConsum += indexCurent - indexPrecedent;
+							}
+						}
+						row['total_consum'] = totalConsum;
+						this.consumTotalM3 += totalConsum;
+						this.listaConsum.push(row);
+					});
+				}
+			},
+			(err) => {
+				this.displayMessage('error-server', err);
+			}
+		);
+	}
+
+	displayMessage(type: string, msg: string) {
+		let classes = '';
+		if (type === 'error') {
+			classes = 'red lighten-2';
+		} else if (type === 'error-server') {
+			classes = 'red darken-4';
+		} else if (type === 'info') {
+			classes = 'light-blue darken-1';
+		} else if (type === 'success') {
+			classes = 'green lighten-2';
+		}
+
+		M.toast({ html: msg, classes: classes });
+		let toatsContainer = document.getElementById('toast-container');
+		toatsContainer.style.right = 'inherit';
+		toatsContainer.style.left = '7%';
 	}
 
 	initDom() {

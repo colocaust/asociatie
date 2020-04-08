@@ -1,1 +1,27 @@
+.bold {
+	font-weight: bold !important;
+}
 
+@media only screen and (max-width: 992px) {
+	.modal {
+		width: 100%;
+		top: 0 !important;
+		max-height: 100%;
+		height: 100%;
+	}
+	.modal.open {
+		display: flex !important;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100vh;
+	}
+	.modal.open form {
+		display: flex !important;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100vh;
+	}
+	// .modal .modal-content {
+	// 	min-height: 85vh;
+	// }
+}

@@ -20,7 +20,7 @@ export class PrintComponent implements OnInit {
 	nrBucatarii: any[] = [];
 	nrBai: any[] = [];
 	selectedId: number;
-	totalConsum: number;
+	totalConsum: number = 0;
 
 	constructor(private route: ActivatedRoute, private _websql: WebSqlService) {
 		this.formData = {
@@ -55,12 +55,12 @@ export class PrintComponent implements OnInit {
 		for (let i = 0; i < 10; i++) {
 			let key = 'bucatarie_' + i;
 			this.consumData[key] = '';
-			this.consumDataPrecedent[key] = '';
+			this.consumDataPrecedent[key] = 0;
 		}
 		for (let i = 0; i < 10; i++) {
 			let key = 'baie_' + i;
 			this.consumData[key] = '';
-			this.consumDataPrecedent[key] = '';
+			this.consumDataPrecedent[key] = 0;
 		}
 
 		this.routeSub = this.route.params.subscribe((params) => {
@@ -69,8 +69,6 @@ export class PrintComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		console.log(this.selectedId);
-
 		const selectSetari = this._websql.select('setari', 'rowid', '1');
 		selectSetari.then(
 			(retData: any) => {
@@ -99,13 +97,13 @@ export class PrintComponent implements OnInit {
 					formDataLocal = { ...formDataLocal, ...retData.rows[0] };
 				}
 				this.consumData = formDataLocal;
-				this.totalConsum = 0;
-				for (let i = 0; i < this.formData.nr_bucatarii; i++) {
-					this.totalConsum = this.totalConsum + parseFloat(formDataLocal['bucatarie_' + i]);
-				}
-				for (let i = 0; i < this.formData.nr_bai; i++) {
-					this.totalConsum = this.totalConsum + parseFloat(formDataLocal['baie_' + i]);
-				}
+				// this.totalConsum = 0;
+				// for (let i = 0; i < this.formData.nr_bucatarii; i++) {
+				// 	this.totalConsum += indexCurent - indexPrecedent;
+				// }
+				// for (let i = 0; i < this.formData.nr_bai; i++) {
+				// 	this.totalConsum = this.totalConsum + parseFloat(formDataLocal['baie_' + i]);
+				// }
 
 				this.selecteazaValoareaPrecedenta(this.consumData.consum_timestamp);
 			},
@@ -131,6 +129,17 @@ export class PrintComponent implements OnInit {
 				let formDataLocal: any = this.consumDataPrecedent;
 				if (retData.rows.length > 1) {
 					formDataLocal = { ...formDataLocal, ...retData.rows[1] };
+				}
+				for (let i = 0; i < this.formData.nr_bucatarii; i++) {
+					let indexCurent = this.consumData[`bucatarie_${i}`];
+					let indexPrecedent = formDataLocal[`bucatarie_${i}`];
+					this.totalConsum += indexCurent - indexPrecedent;
+				}
+				for (let i = 0; i < this.formData.nr_bai; i++) {
+					let indexCurent = this.consumData[`baie_${i}`];
+					let indexPrecedent = formDataLocal[`baie_${i}`];
+					this.totalConsum += indexCurent - indexPrecedent;
+					// this.totalConsum = this.totalConsum + parseFloat(formDataLocal['baie_' + i]);
 				}
 				this.consumDataPrecedent = formDataLocal;
 			},

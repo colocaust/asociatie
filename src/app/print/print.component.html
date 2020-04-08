@@ -45,7 +45,7 @@
             <td class="center-align">TOTAL</td>
         </tr>
         <tr>
-            <td>Consum <small class="text_normal">( m<sup>3</sup> )</small></td>
+            <td>Consum <span class="text_normal">( m<sup>3</sup> )</span></td>
             <td *ngFor="let baie of nrBai">{{ ( consumData['baie_' + baie ] - consumDataPrecedent['baie_' + baie ] ) }}</td>
             <td *ngFor="let bucatarie of nrBucatarii">{{ ( consumData['bucatarie_' + bucatarie ] - consumDataPrecedent['bucatarie_' + bucatarie ] ) }}</td>
             <td>{{ totalConsum }}</td>

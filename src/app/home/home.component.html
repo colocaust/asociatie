@@ -1,4 +1,4 @@
-<table class="highlight" *ngIf="formData">
+<table class="highlight responsive-table" *ngIf="formData">
   <thead>
     <tr>
       <th style="width: 35px;"></th>
@@ -10,6 +10,7 @@
       <th *ngFor="let baie of nrBai">
         Baie {{ (baie + 1) }} <small>(index)</small>
       </th>
+      <th>Consum</th>
       <th style="width: 90px;"></th>
     </tr>
   </thead>
@@ -29,11 +30,21 @@
       <td *ngFor="let baie of nrBai">
         {{ consum['baie_' + baie ] }}
       </td>
+      <td>{{ consum['total_consum'] }} <small>m<sup>3</sup></small></td>
       <td class="right-align">
         <a type="button" [ngClass]="{'hide': afiseazaRaport(i)}" class="waves-effect waves-light btn-floating btn-small red" target="_blank" [routerLink]="['/print', consum.rowid]"><i class="material-icons">local_printshop</i></a>
         &nbsp;
         <button type="button" class="waves-effect waves-light btn-floating btn-small red" (click)="stergeConsum(i, consum.rowid)"><i class="material-icons">remove_circle_outline</i></button>
       </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td *ngFor="let bucatarie of nrBucatarii"></td>
+      <td *ngFor="let baie of nrBai"></td>
+      <td><span class="bold">{{ consumTotalM3 }} <small>m<sup>3</sup></small></span></td>
+      <td>&nbsp;</td>
     </tr>
   </tbody>
 </table>
