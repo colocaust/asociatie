@@ -1,29 +1,34 @@
 # Asociatie
 
-* [x] Instalare 
+* [x] Instalare Angular
+* [x] Definit bara de navigare
+* [x] Definit Componentan Home
+* [x] Creat view pentru componenta Home
+  * [x] Creat modal ( popup ) pentru Adauga, Editeaza si Setari
+  * [x] Creat table pentru listare consum
+  * [x] Creat functie de stergere a consumului
+  * [x] Creat functie de vizualizare raport al consului (utilizand ca referinta consumul anterior)
+* [x] Creat CSS de printare pentru raport
+* [x] Toate datele sunt salvate in WebSQL utilizand serviciul *web-sql.service.ts*
+* [x] Intializare dropdown folosind directivele Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.0.
+## Pachete necesare
+* Node LTS (am folosit v.12)
+* Acest proiect a fost generat cu [Angular CLI](https://github.com/angular/angular-cli) versiunea 9.1.0
+* Web server (Apache sau Nginx pentru versiunea de productie)
 
-## Development server
+## Instalare Angular CLI
+> npm install -g @angular/cli
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Cum pornesti proiectul in faza de testare
+> ng serve
 
-## Code scaffolding
+## Cum faci build-ul pentru productie
+> ng build
+#### Build pentru productie avand calea de baza diferite de **/**
+> ng build --base-href /LOCATIE/
+- Folosind aceasta comanda de build calea proiectului pe serverul de productie trebuie sa fie `http://localhost/LOCATIE/`
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Altele
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Pentru mai multe detalii utilizati comanda de ajutor Angular CLI `ng help` sau accesati [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
