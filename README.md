@@ -29,6 +29,9 @@
 > ng build --base-href /LOCATIE/
 - Folosind aceasta comanda de build calea proiectului pe serverul de productie trebuie sa fie `http://localhost/LOCATIE/`
 
+## Demo LIVE
+> [Acceseaza acest Link](https://colocaust.dev/proiect/asociatie/)
+
 ## Altele
 
 Pentru mai multe detalii utilizati comanda de ajutor Angular CLI `ng help` sau accesati [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
