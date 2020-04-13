@@ -1,7 +1,7 @@
 <table class="highlight responsive-table" *ngIf="formData">
   <thead>
     <tr>
-      <th style="width: 35px;"></th>
+      <!-- <th style="width: 35px;"></th> -->
       <th>Zi Citire</th>
       <th>Luna / Anul</th>
       <th *ngFor="let bucatarie of nrBucatarii">
@@ -11,17 +11,17 @@
         Baie {{ (baie + 1) }} <small>(index)</small>
       </th>
       <th>Consum</th>
-      <th style="width: 90px;"></th>
+      <th style="width: 145px;"></th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let consum of listaConsum; let i = index" [attr.data-index]="i">
-      <td>
+      <!-- <td>
         <label>
           <input type="checkbox" [disabled]="checkPentruConsum(i)" value="{{ i }}" (click)="consumPentruRaport(i, $event)" />
           <span></span>
         </label>
-      </td>
+      </td> -->
       <td>{{ consum.zi_citire }}</td>
       <td>{{ consum.luna }} / {{ consum.anul }}</td>
       <td *ngFor="let bucatarie of nrBucatarii">
@@ -32,13 +32,34 @@
       </td>
       <td>{{ consum['total_consum'] }} <small>m<sup>3</sup></small></td>
       <td class="right-align">
-        <a type="button" [ngClass]="{'hide': afiseazaRaport(i)}" class="waves-effect waves-light btn-floating btn-small red" target="_blank" [routerLink]="['/print', consum.rowid]"><i class="material-icons">local_printshop</i></a>
-        &nbsp;
-        <button type="button" class="waves-effect waves-light btn-floating btn-small red" (click)="stergeConsum(i, consum.rowid)"><i class="material-icons">remove_circle_outline</i></button>
+
+        <div class="hide-on-med-and-down">
+          <a type="button" class="waves-effect btn-floating btn-small red modal-trigger" (click)="editeazaConsum(consum.rowid);" href="#adaugaConsum" data-id="{{ consum.rowid }}"><i class="material-icons">edit</i></a>
+          &nbsp;
+          <!-- <a [ngClass]="{'hide': afiseazaRaport(i)}" class="waves-effect waves-light btn-floating btn-small red" target="_blank" [routerLink]="['/print', consum.rowid]"><i class="material-icons">local_printshop</i></a> -->
+          <a class="waves-effect btn-floating btn-small red" target="_blank" [routerLink]="['/print', consum.rowid]"><i class="material-icons">local_printshop</i></a>
+          &nbsp;
+          <button type="button" class="waves-effect btn-floating btn-small red" (click)="stergeConsum(i, consum.rowid)"><i class="material-icons">remove_circle_outline</i></button>
+        </div>
+
+        <div class="hide-on-large-only show-on-medium-and-down">
+          <a class="btn-floating btn-small red dropdown-trigger-actiuni" href="javascript:void(0);" [attr.data-target]="'actiuniConsum'+i" appDropDownMenu><i class="material-icons">menu</i></a>
+          <ul id="actiuniConsum{{ i }}" class="dropdown-content" tabindex="0">
+            <li>
+              <a class="modal-trigger" href="#!" (click)="editeazaConsum(consum.rowid);" href="#adaugaConsum" data-id="{{ consum.rowid }}"><i class="material-icons">edit</i> Editeaza</a>
+            </li>
+            <li>
+              <a target="_blank" [routerLink]="['/print', consum.rowid]"><i class="material-icons">local_printshop</i> Raport</a>
+            </li>
+            <li>
+              <a href="#!" (click)="stergeConsum(i, consum.rowid)"><i class="material-icons">remove_circle_outline</i> Sterge</a>
+            </li>
+          </ul>
+        </div>
+
       </td>
     </tr>
     <tr>
-      <td></td>
       <td></td>
       <td></td>
       <td *ngFor="let bucatarie of nrBucatarii"></td>
@@ -55,6 +76,9 @@
     <div class="modal-content" style="padding-bottom: 0;">
       <h4>Citire Index</h4>
 
+      <input id="mod_form" formControlName="mod_form" type="hidden">
+      <input id="id" formControlName="id" type="hidden">
+
       <div class="input-field">
         <input class="monthPicker" id="zi_citire_pick" type="text" autocomplete="off">
         <input id="zi_citire" formControlName="zi_citire" type="hidden">
@@ -66,9 +90,9 @@
         <div class="col s6">
 
           <div class="input-field">
-            <select class="matSelect" id="luna" formControlName="luna">
-              <option value="" disabled selected>Choose your option</option>
-              <option *ngFor="let numeLuna of lunileAnului" [ngValue]="numeLuna">
+            <select class="matSelect select_luna" id="luna" formControlName="luna">
+              <option value="" disabled>Choose your option</option>
+              <option *ngFor="let numeLuna of lunileAnului" [ngValue]="numeLuna" [selected]="formularContor.controls['luna'].value===numeLuna">
                 {{ numeLuna }}
               </option>
             </select>
@@ -80,7 +104,7 @@
         <div class="col s6">
 
           <div class="input-field">
-            <select class="matSelect" id="anul" formControlName="anul">
+            <select class="matSelect select_anul" id="anul" formControlName="anul">
               <option value="" disabled>Choose your option</option>
               <option *ngFor="let selectAnul of listaAnilor" [ngValue]="selectAnul">
                 {{ selectAnul }}

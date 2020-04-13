@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import * as M from 'materialize-css';
 import { WebSqlService } from '../web-sql.service';
 import { FormBuilder } from '@angular/forms';
-import { runInThisContext } from 'vm';
 
 declare var $: any;
 
@@ -31,6 +30,8 @@ export class HomeComponent implements OnInit {
 		nr_bai: ''
 	};
 	consumData: object = {
+		mod_form: 'creaza',
+		id: 0,
 		zi_citire: '',
 		luna: '',
 		anul: 0,
@@ -117,6 +118,40 @@ export class HomeComponent implements OnInit {
 		this.initDom();
 	}
 
+	ngAfterViewInit(): void {
+	}
+
+	editeazaConsum(rowid: number) {
+		const modalInst = M.Modal.getInstance(document.getElementById('adaugaConsum'));
+
+		let selecteazaConsum = this._websql.select('consum', 'rowid', rowid);
+
+		selecteazaConsum.then(
+			(retData: any) => {
+				if (retData.rows.length > 0) {
+					let formDataLocal: any = this.consumData;
+					formDataLocal = { ...formDataLocal, ...retData.rows[0] };
+
+					formDataLocal.mod_form = 'editeaza';
+					formDataLocal.id = rowid;
+					this.indexBucatarie = this.nrBucatarii.length;
+					this.indexBaie = this.nrBai.length;
+
+					let zi_citire_pick: any = document.getElementById('zi_citire_pick');
+					zi_citire_pick.value = formDataLocal.zi_citire;
+
+					this.formularContor = this.formBuilder.group(formDataLocal);
+				} else {
+					this.displayMessage('error', 'Acest consum nu exista!');
+					modalInst.close();
+				}
+			},
+			(err) => {
+				this.displayMessage('error-server', err);
+			}
+		);
+	}
+
 	saveleazaConsum(data: any) {
 		let indexLuna = this.lunileAnului.indexOf(data.luna) + 1;
 		let valoareAn = data.anul;
@@ -126,15 +161,45 @@ export class HomeComponent implements OnInit {
 
 		const modalInst = M.Modal.getInstance(document.getElementById('adaugaConsum'));
 
-		let existaConsum = this._websql.selectWhere('consum', { luna: data.luna, anul: data.anul });
+		if (data.mod_form == 'creaza') {
+			delete data.mod_form;
+			delete data.id;
+			let existaConsum = this._websql.selectWhere('consum', { luna: data.luna, anul: data.anul });
 
-		existaConsum.then(
-			(retData: any) => {
-				if (retData.rows.length > 0) {
-					// Exista ( Eroare )
-					this.displayMessage('error', 'Acest consum este deja adaugat!');
-				} else {
-					this._websql.insert('consum', data);
+			existaConsum.then(
+				(retData: any) => {
+					if (retData.rows.length > 0) {
+						// Exista ( Eroare )
+						this.displayMessage('error', 'Acest consum este deja adaugat!');
+					} else {
+						this._websql.insert('consum', data);
+						this.colecteazaSiAfiseazaConsum();
+						this.formularContor.reset();
+
+						let date = new Date();
+						let anulCurent = date.getFullYear();
+						this.consumData['anul'] = anulCurent;
+						this.indexBucatarie = 0;
+						this.indexBaie = 0;
+						let zi_citire_pick: any = document.getElementById('zi_citire_pick');
+						zi_citire_pick.value = '';
+						this.displayMessage('success', 'Consumul a fost adaugat cu succes!');
+					}
+					modalInst.close();
+				},
+				(err) => {
+					this.displayMessage('error-server', err);
+				}
+			);
+		}
+		if (data.mod_form == 'editeaza') {
+			let rowid = data.id;
+			delete data.mod_form;
+			delete data.id;
+			let updateConsum = this._websql.update('consum', data, 'rowid', rowid);
+
+			updateConsum.then(
+				(retData: any) => {
 					this.colecteazaSiAfiseazaConsum();
 					this.formularContor.reset();
 
@@ -145,14 +210,14 @@ export class HomeComponent implements OnInit {
 					this.indexBaie = 0;
 					let zi_citire_pick: any = document.getElementById('zi_citire_pick');
 					zi_citire_pick.value = '';
-					this.displayMessage('success', 'Indexul a fost adaugat cu succes!');
+					this.displayMessage('success', 'Consumul a fost modificat cu succes!');
+					modalInst.close();
+				},
+				(err) => {
+					this.displayMessage('error-server', err);
 				}
-				modalInst.close();
-			},
-			(err) => {
-				this.displayMessage('error-server', err);
-			}
-		);
+			);
+		}
 	}
 
 	onSubmit(data) {
@@ -191,32 +256,32 @@ export class HomeComponent implements OnInit {
 		}
 	}
 
-	consumPentruRaport(value: number, event: any) {
-		if (event.toElement.checked) {
-			this.consumChecked = value;
-		} else {
-			this.consumChecked = -1;
-		}
-	}
+	// consumPentruRaport(value: number, event: any) {
+	// 	if (event.toElement.checked) {
+	// 		this.consumChecked = value;
+	// 	} else {
+	// 		this.consumChecked = -1;
+	// 	}
+	// }
 
-	checkPentruConsum(currentValue: number) {
-		if (this.consumChecked != -1) {
-			if (this.consumChecked != currentValue) {
-				return true;
-			}
-		}
-		return false;
-	}
+	// checkPentruConsum(currentValue: number) {
+	// 	if (this.consumChecked != -1) {
+	// 		if (this.consumChecked != currentValue) {
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 
-	afiseazaRaport(currentValue: number) {
-		if (this.consumChecked == -1) {
-			return true;
-		}
-		if (this.consumChecked != currentValue) {
-			return true;
-		}
-		return false;
-	}
+	// afiseazaRaport(currentValue: number) {
+	// 	if (this.consumChecked == -1) {
+	// 		return true;
+	// 	}
+	// 	if (this.consumChecked != currentValue) {
+	// 		return true;
+	// 	}
+	// 	return false;
+	// }
 
 	stergeConsum(index: number, rowid: number) {
 		this._websql.remove('consum', 'rowid', rowid);
@@ -231,17 +296,19 @@ export class HomeComponent implements OnInit {
 		selectConsum.then(
 			(retData: any) => {
 				if (retData.rows.length > 0) {
+					this.listaConsum = [];
 					retData.rows.forEach((row, index) => {
+						let formDataLocal: any = this.formData;
 						let consumPrecedent = [];
 						let totalConsum = 0;
 						if (index > 0) {
 							consumPrecedent = retData.rows[index - 1];
-							for (let i = 0; i < this.formData.nr_bucatarii; i++) {
+							for (let i = 0; i < formDataLocal.nr_bucatarii; i++) {
 								let indexCurent = parseInt(row[`bucatarie_${i}`]);
 								let indexPrecedent = parseInt(consumPrecedent[`bucatarie_${i}`]);
 								totalConsum += indexCurent - indexPrecedent;
 							}
-							for (let i = 0; i < this.formData.nr_bai; i++) {
+							for (let i = 0; i < formDataLocal.nr_bai; i++) {
 								let indexCurent = parseInt(row[`baie_${i}`]);
 								let indexPrecedent = parseInt(consumPrecedent[`baie_${i}`]);
 								totalConsum += indexCurent - indexPrecedent;
@@ -279,22 +346,37 @@ export class HomeComponent implements OnInit {
 
 	initDom() {
 		let self = this;
-		document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener('DOMContentLoaded', () => {
+			// M.AutoInit();
+
 			const setariInit = M.Modal.init(document.getElementById('setari'), {
 				dismissible: false,
 				onOpenStart:
 					() => {
 						M.updateTextFields();
-						// document.getElementById('setari').style.overflowY = 'visible';
-						// document.getElementById('setari').style.maxHeight = 'inherit';
 					}
 			});
 
 			const consumInit = M.Modal.init(document.getElementById('adaugaConsum'), {
 				dismissible: false,
-				onOpenStart:
+				onCloseEnd:
+					() => {
+						self.formularContor.reset();
+						self.indexBucatarie = 0;
+						self.indexBaie = 0;
+						let zi_citire_pick: any = document.getElementById('zi_citire_pick');
+						zi_citire_pick.value = '';
+					},
+				onOpenEnd:
 					() => {
 						M.updateTextFields();
+
+						M.FormSelect.init(document.querySelectorAll('.matSelect'), {
+							dropdownOptions: { container: document.body }
+						});
+					},
+				onOpenStart:
+					() => {
 						// document.getElementById('adaugaConsum').style.overflowY = 'visible';
 						// document.getElementById('adaugaConsum').style.maxHeight = 'inherit';
 						let alegeLuna = M.Datepicker.init(document.querySelector('.monthPicker'), {
@@ -368,10 +450,6 @@ export class HomeComponent implements OnInit {
 								},
 							showDaysInNextAndPreviousMonths: true,
 							container: document.querySelector('.picker_container'),
-							parse:
-								(data) => {
-									console.log(data);
-								},
 							onDraw:
 								() => {
 									let inputMonthField: any;
@@ -386,10 +464,6 @@ export class HomeComponent implements OnInit {
 									// self.formularContor.controls['zi_citire'].setValue(inst.date);
 									self.formularContor.controls['zi_citire'].setValue(inst.toString());
 								}
-						});
-
-						M.FormSelect.init(document.querySelectorAll('.matSelect'), {
-							dropdownOptions: { container: document.body }
 						});
 					}
 			});
